@@ -1,0 +1,2 @@
+- Auto-check by system
+- Moodle-like questions types

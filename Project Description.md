@@ -64,3 +64,15 @@ Users should be able to:
 - Lab feedback (simple feedback with comment and scores)
 - Test questions with auto check after lab
 - Submit review with form (standardized feedback form)
+
+## Monetization
+---
+- **Courses**
+	Teachers can create paid courses. When students are enrolled, owner of the course get money from them, but part of this money goes to our service.
+- **Ads** 
+	After reaching some threshold with reputation, partnership program is available. Labs' authors pay, our service promote these users and their courses via ads.
+- **AI** 
+	Paid AI service. First tries are free, then pay.
+- **Paid access to labs**
+	Membership program. Paid subscription allows for publishing special labs which can be accessed only by another members of the paid subscription. (see Medium).
+- 

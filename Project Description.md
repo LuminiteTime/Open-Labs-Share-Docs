@@ -3,7 +3,7 @@
 
 ***Open Labs Share*** is a peer-to-peer educational platform that connects experts with learners through hands-on, practical learning experiences. Here's what it offers:
 
-- **Expert-Created Content**: Subject-matter experts design step-by-step laboratory exercises focused on real-world applications
+- **Expert-Created Content**: Subject-matter experts design step-by-step lab exercises focused on real-world applications
 - **Practical Learning**: Students complete these labs to develop skills they can immediately apply in professional settings
 - **Community Feedback**: A peer review system where learners evaluate and provide feedback on each other's completed assignments
 - **Knowledge Sharing Ecosystem**: A collaborative environment where practical knowledge is actively exchanged among community members
@@ -20,7 +20,7 @@ Essentially, it's like combining the practical approach of a university lab with
 ---
 
 ### Key features:
--  Publishing lab materials (Markdown document with assets)
+- Publishing lab materials (Markdown document with assets)
 - Submitting finished work in PDF format.
 - Ability to leave feedback on somebody's work
 
@@ -29,13 +29,13 @@ Lab materials are represented in web page as rendered Markdown documents with ex
 Each lab should be a list of steps required to do / create / build something. All labs should be practically oriented. Consequently, each lab should have afterward hands-on exercises (theoretical questions, practical tasks).
 
 #### Submits of homework
-Each student must be able to do a homework (set of exercises) after the laboratory. In order to have feedback, student may submit a finished work in **PDF** format to a platform. Each submission is connected to the exact laboratory and its set of exercises. 
+Each student must be able to do a homework (set of exercises) after the lab. In order to have feedback, student may submit a finished work in **PDF** format to a platform. Each submission is connected to the exact lab and its set of exercises. 
 
 #### Submit evaluating
-The author of the laboratory or people that have finished the laboratory should be able to check new homeworks from other people.
+The author of the lab or people that have finished the lab should be able to check new homeworks from other people.
 
 > [!note] User story on submit evaluation
-> **As a** laboratory author or student who completed a lab 
+> **As a** lab author or student who completed a lab 
 > **I want to** review and provide feedback on submitted homework 
 > **So that** I can help other learners improve their practical skills and contribute to the learning community
 > 
@@ -61,5 +61,6 @@ Users should be able to:
 ### Extra features
 - Lab categorization
 - Lab search by title, categories
-- Lab reedback (simple feedback with comment and scores)
-- Submit review with form (standartized feedback form)
+- Lab feedback (simple feedback with comment and scores)
+- Test questions with auto check after lab
+- Submit review with form (standardized feedback form)

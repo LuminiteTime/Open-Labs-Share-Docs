@@ -22,5 +22,29 @@ Users Service является центральным хранилищем вс�
 - **Связь с Labs Service:** Авторство и права доступа к лабораторным работам
 - **Поддержка Feedback Service:** Профильная информация для отзывов и комментариев
 
+### Структуры данных
 
+**User Entity:**
+
+| Field    | Type        |
+| -------- | ----------- |
+| id (PK)  | UUID / long |
+| email    | string      |
+| name     | string      |
+| surname  | string      |
+| password | hex string  |
+
+**Labs Solved Relation**
+
+| Field    | Type        |
+| -------- | ----------- |
+| user_id  | UUID / long |
+| lab_id   | UUID / long |
+
+**Labs Published Relation**
+
+| Field    | Type        |
+| -------- | ----------- |
+| user_id  | UUID / long |
+| lab_id   | UUID / long |
 

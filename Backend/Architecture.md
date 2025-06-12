@@ -16,3 +16,8 @@
 ### Frontend Communication
 - REST
 - [[API Endpoints]]
+
+### MVP Architecture
+
+![[ArchitectureLayout.png]]
+

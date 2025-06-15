@@ -39,3 +39,40 @@ Labs Service является центральным хранилищем все
 - **Генерация signed URLs:** Временные ссылки для безопасного доступа к файлам
 - **Автоматическая оптимизация:** Сжатие изображений и конвертация в web-форматы
 
+### Структуры данных
+
+**Article Entity:**
+
+| Field      | Type          |
+| ---------- | ------------- |
+| id (PK)    | UUID / long   |
+| title      | string        |
+| owner_id   | UUID / long   |
+| files      | list\<string> |
+| short_desc | string        |
+| views      | integer       |
+
+**Lab Entity**
+
+| Field         | Type          |
+| ------------- | ------------- |
+| id (PK)       | UUID / long   |
+| title         | string        |
+| owner_id      | UUID / long   |
+| files         | list\<string> |
+| short_desc    | string        |
+| views         | integer       |
+| people_solved | integer       |
+ 
+### Сохранение данных в S3
+
+```text
+Bucket:
+user_id
+	└── lab_id
+		├── asset_file.extension
+		├── example.png
+		└── content.md
+```
+
+Link example: `...\bucket\user_id\lab_id\filename`

@@ -1,67 +1,479 @@
-All api adresses are started with `adress.com/api`
+# API Gateway Documentation
+
+This document represents documentation for [[Frontend]] requests via REST. Each endpoint has its path, request and response body, types of errors.
+
+**Base URL:** `address.com/api`
+
+All endpoints require JWT authentication unless specified otherwise.
+**Error response** for no authentication:  `401 Unauthorized`
+
+---
+
+## Auth Service
+
+| Endpoint                               | Type | Description             |
+| -------------------------------------- | ---- | ----------------------- |
+| [`POST /auth/refresh`](#token-refresh) | POST | Обновление access token |
+### Token Refresh
+
+**Refresh JWT token**
+- **Endpoint:** `POST /auth/refresh`
+- **Authentication:** Refresh token required
+- **Description:** Обновление access token
+
+**Request Body:**
+```json
+{
+	"refresh_token": "string (required)"
+}
+
+```
+
+**Response:**
+- **Status:** `200 OK`
+- **Body:**
+```json
+{
+	"jwt_token": "string"
+}
+```
+
+---
 
 
-# Authentication
+## User Service
 
-| Endpoint           | Request Type | Description                            |
-| ------------------ | ------------ | -------------------------------------- |
-| `/auth/register`   | `POST`       | Регистрация нового пользователя        |
-| `/auth/login`      | `POST`       | Вход в систему (получение JWT-токена)  |
-| `/users/me`        | `GET`        | Получение данных текущего пользователя |
-| `/users/me`        | `PATCH`      | Обновление профиля                     |
-| `/users/{user_id}` | `GET`        | Просмотр профиля другого пользователя  |
+| Endpoint                                                 | Type | Description                                                   |
+| -------------------------------------------------------- | ---- | ------------------------------------------------------------- |
+| [`POST /users/register`](#user-registration)             | POST | New user creation in the system                               |
+| [`POST /users/login`](#user-login)                       | POST | User authentication                                           |
+| [`GET /users/{user_id}`](#get-user-data)                 | GET  | Get user primary data by user ID                              |
+| [`GET /users/profile/{user_id}`](#get-user-profile-data) | GET  | Get user profile (personal + labs + articles) data by user ID |
+
+### User-Registration
+
+**Register a new user**
+- **Endpoint:** `POST /users/register`
+- **Authentication:** Not required
+- **Description:** New user creation in the system
+
+**Request Body:**
+```json
+{
+	"username": "string (required)",
+	"surname": "string (required)", 
+	"email": "string (required, valid email format)",
+	"password": "string (required, min 8 characters)"
+}
+```
+
+**Response:**
+- **Status:** `201 Created`
+- **Body:**
+```json
+{
+	"jwt_token": "string",
+	"jwt_refresh_token": "string"
+}
+
+```
+
+**Error Responses:**
+- `400 Bad Request` - Invalid input data
+- `409 Conflict` - User already exists  
+
+---
+
+### User-Login
+
+**Authenticate existing user**
+- **Endpoint:** `POST /users/login`
+- **Authentication:** Not required
+- **Description:** User authentication
+
+**Request Body:**
+```json
+{
+	"email": "string (required)",
+	"password": "string (required)"
+}
+
+```
+
+**Response:**
+- **Status:** `200 OK`
+- **Body:**
+```json
+{
+	"jwt_token": "string",
+	"jwt_refresh_token": "string"
+}
+
+```
+
+**Error Responses:**
+- `404 Not Found` - User not found
+- `409 Conflict` - User password is wrong
+
+---
+
+### Get-User-Data
+
+**Retrieve user primary information**
+- **Endpoint:** `GET /users/{user_id}`
+- **Authentication:** Required
+- **Description:** Get user primary data by user ID
+
+**Response:**
+- **Status:** `200 OK`
+- **Body:**
+```json
+{
+	"id": number,
+	"username": "string",
+	"surname": "string",
+	"email": "string"
+}
+```
+
+**Error Responses:**
+- `404 Not Found` - User not found
+
+---
+
+### Get-User-Profile-Data
+
+**Retrieve user profile information**
+- **Endpoint:** `GET /users/profile/{user_id}`
+- **Authentication:** Required
+- **Description:** Get user profile (personal + labs + articles) data by user ID
+
+**Response:**
+- **Status:** `200 OK`
+- **Body:**
+```json
+{
+	"id": number,
+	"username": "string",
+	"surname": "string",
+	"email": "string",
+	"profile_photo": "string (path to MinIO database)",
+	"labs": [
+		"lab_id": number,
+		"title": "string",
+		"short_desc": "string",
+		"submissioins": number,
+		"views": number
+			],
+	"articles": [
+		"article_id": number,
+		"title": "string",
+		"short_desc": "string"
+		"views": number
+		]
+}
+
+```
+
+**Error Responses:**
+- `404 Not Found` - User not found
+
+---
+
+## Articles Service
+
+| Endpoint | Type | Description |
+|----------|------|-------------|
+| [`POST /articles/new`](#create-article) | POST | Creation of new article in PDF format |
+| [`GET /articles/get`](#get-articles-list) | GET | Get list of articles |
+| [`GET /articles/get/{article_id}`](#get-article-by-id) | GET | Get specified article by ID |
+
+### Create-Article
+
+**Create new article**
+- **Endpoint:** `POST /articles/new`
+- **Authentication:** Required
+- **Content-Type:** `multipart/form-data`
+- **Description:** Creation of new article in PDF format
+
+**Request Body (From Data):**
+```json
+title: string (required) - Article title
+short_desc: string (required) - Article description
+pdf_file: file (required) - PDF document file
+```
+
+**Response:**
+- **Status:** `201 Created`
+- **Body:**
+```json
+{
+	"id": number,
+	"message": "Article created successfully"
+}
+```
+
+---
+
+### Get-Articles-List
+
+**Retrieve articles**
+- **Endpoint:** `GET /articles/get`
+- **Authentication:** Required
+- **Description:** Get list of articles
+
+**Query Parameters:**
+- `page` (integer, optional) - Page number (default: 1)
+- `limit` (integer, optional) - Items per page (default: 20, max: 100)
+
+**Response:**
+- **Status:** `200 OK`
+- **Body:**
+```json
+{
+  "articles": [
+    {
+      "id": number,
+      "title": "string",
+      "short_desc": "string",
+      "created_at": "string (ISO 8601)",
+      "views": number,
+      "author_id": number,
+      "author_name": "string",
+      "author_surname": "string"
+    }
+  ],
+  "pagination": {
+    "current_page": "integer",
+    "total_pages": "integer",
+    "total_items": "integer"
+  }
+}
+```
+
+---
+
+### Get-Article-by-ID
+
+**Retrieve articles**
+- **Endpoint:** `GET /articles/get/{article_id}`
+- **Authentication:** Required
+- **Description:** Get specified article by ID
+
+**Response:**
+- **Status:** `200 OK`
+- **Body:**
+```json
+{
+	"id": number,
+	"title": "string",
+	"short_desc": "string",
+	"created_at": "string (ISO 8601)",
+	"views": number,
+	"author_id": number,
+	"author_name": "string",
+	"author_surname": "string"
+}
+```
+
+**Error Responses:**
+- `404 Not Found` - Article not found
+
+---
+
+## Labs Service
+
+| Endpoint                                                      | Type | Description                                               |
+| ------------------------------------------------------------- | ---- | --------------------------------------------------------- |
+| [`POST /labs`](#create-lab)                                   | POST | Create new lab with markdown and supporting files         |
+| [`GET /labs/get`](#get-labs-list)                             | GET  | Get list of labs with pagination                          |
+| [`GET /labs/get/{lab_id}`](#get-lab-by-id)                    | GET  | Get lab by ID                                             |
+| [`POST /labs/{lab_id}/sumbit`](#submit-lab-solution)          | POST | Submit a solution of the lab as PDF file                  |
+| [`GET /labs/{lab_id}/sumbissions`](#get-lab-sumbissions-list) | GET  | Get list of submissions for specified lab with pagination |
+
+### Create-Lab
+
+**Create new lab with markdown and supporting files**
+- **Endpoint:** `POST /labs`
+- **Authentication:** Required
+- **Content-Type:** `multipart/form-data`
+- **Description:** Create new lab with main md file and supporting assets
+
+**Request Body (From Data):**
+```json
+title: string (required) - Lab title
+short_desc: string (required) - Short description of the lab
+md_file: file (required) - Markdown file with lab instructions
+assets[]: file[] (optional) - Supporting files (images, code, etc.)
+```
+
+**Response:**
+- **Status:** `201 Created`
+- **Body:**
+```json
+{
+	"id": number,
+	"message": "Article created successfully"
+}
+```
+
+---
+
+### Get-Labs-List
+
+**Retrieve available labs**
+- **Endpoint:** `GET /labs/get`
+- **Authentication:** Required
+- **Description:** Get list of labs with pagination
+
+**Query Parameters:**
+- `page` (integer, optional) - Page number (default: 1)
+- `limit` (integer, optional) - Items per page (default: 20, max: 100)
+
+**Response:**
+- **Status:** `200 OK`
+- **Body:**
+```json
+{
+	"id": number,
+	"title": "string",
+	"short_desc": "string",
+	"created_at": "string (ISO 8601)",
+	"views": number,
+	"submissions": number,
+	"author_id": number,
+	"author_name": "string",
+	"author_surname": "string"
+}
+```
+
+---
+
+### Get-Lab-by-ID
+
+**Get specified lab:**
+- **Endpoint:** `GET /labs/get/{lab_id}`
+- **Authentication:** Required
+- **Description:** Get lab by ID
 
 
-# Labs  
+**Response:**
+- **Status:** `200 OK`
+- **Body:**
+```json
+{
+  "labs": [
+    {
+      "id": number,
+      "title": "string",
+      "short_desc": "string",
+      "created_at": "string (ISO 8601)",
+      "views": number,
+      "submissions": number,
+      "author_id": number,
+      "author_name": "string",
+      "author_surname": "string"
+    }
+  ],
+  "pagination": {
+    "current_page": "integer",
+    "total_pages": "integer",
+    "total_items": "integer"
+  }
+}
+```
 
-| Endpoint                   | Request Type | Description                        |
-| -------------------------- | ------------ | ---------------------------------- |
-| `/labs`                    | `GET`        | Список всех лаб                    |
-| `/labs`                    | `POST`       | Создание новой лабы                |
-| `/labs/{lab_id}`           | `GET`        | Просмотр конкретной лабы           |
-| `/labs/{lab_id}`           | `PATCH`      | Редактирование лабы (только автор) |
-| `/labs/{lab_id}`           | `DELETE`     | Удаление лабы (только автор)       |
-| `/labs/{lab_id}/submit`    | `POST`       | Отправка решения (студентом)       |
-| `/labs/{lab_id}/solutions` | `GET`        | Список решений (для проверки)      |
-| `/labs/{lab_id}/review`    | `POST`       | Добавление проверки/фидбека        |
+**Error Responses:**
+- `404 Not Found` - Lab not found
+
+---
+
+### Submit-Lab-Solution
+
+**Submit Lab Solution as PDF file**
+- **Endpoint:** `POST /labs/{lab_id}/sumbit`
+- **Authentication:** Required
+- **Content-Type:** `multipart/form-data`
+- **Description:** Sumbit a solution of the lab as PDF file
+
+**Request Body (From Data):**
+```json
+pdf_file: file (required) - PDF document file
+```
+
+**Response:**
+- **Status:** `201 Created`
+- **Body:**
+```json
+{
+	"submission_id": number,
+	"message": "Article created successfully"
+}
+```
+
+**Error Responses:**
+- `404 Not Found` - Lab not found
+
+---
+### Get-Lab-Sumbissions-List
+
+**Retrieve available lab submissions**
+- **Endpoint:** `GET /labs/{lab_id}/sumbissions`
+- **Authentication:** Required
+- **Description:** Get list of sumbissions for specified lab with pagination
+
+**Query Parameters:**
+- `page` (integer, optional) - Page number (default: 1)
+- `limit` (integer, optional) - Items per page (default: 20, max: 100)
+
+**Response:**
+- **Status:** `200 OK`
+- **Body:**
+```json
+{
+	"lab_id": number,
+	"lab_title": "string",
+	"submission_id": number,
+	"submitted_at": "string (ISO 8601)",
+	"author_id": number,
+	"author_name": "string",
+	"author_surname": "string"
+}
+```
+
+**Error Responses:**
+- `404 Not Found` - Lab not found
+
+---
+
+## Common Response Codes
+
+| Code  | Description                             |
+| ----- | --------------------------------------- |
+| `200` | OK - Request successful                 |
+| `201` | Created - Resource created successfully |
+| `400` | Bad Request - Invalid request data      |
+| `401` | Unauthorized - Authentication required  |
+| `403` | Forbidden - Access denied               |
+| `404` | Not Found - Resource not found          |
+| `409` | Conflict - Resource already exists      |
+| `500` | Internal Server Error - Server error    |
+
+# Authentication Headers
+
+All authenticated endpoints require: `Authorization: Bearer <jwt_token>`
+
+# Error Response Format
+
+All error responses follow this format:
+```json
+{   
+	"error": {    
+		"code": "string",    
+		"message": "string",    
+		"details": "object (optional)"
+	}
+}
+```
 
 
-# Articles  
-
-| Endpoint                          | Request Type | Description            |
-| --------------------------------- | ------------ | ---------------------- |
-| `/articles`                       | `GET`        | Список статей          |
-| `/articles`                       | `POST`       | Публикация статьи      |
-| `/articles/{article_id}`          | `GET`        | Просмотр статьи        |
-| `/articles/{article_id}`          | `PATCH`      | Редактирование статьи  |
-| `/articles/{article_id}`          | `DELETE`     | Удаление статьи        |
-| `/articles/{article_id}/feedback` | `GET`        | Список фидбеков        |
-| `/articles/{article_id}/feedback` | `POST`       | Добавление фидбека     |
-| `/articles/{article_id}/feedback` | `PATCH`      | Редактирование фидбека |
-
-
-# Feedback
-
-| Endpoint                  | Request Type | Description                           |
-| ------------------------- | ------------ | ------------------------------------- |
-| `/feedback/{feedback_id}` | `GET`        | Просмотр фидбека                      |
-| `/feedback/{feedback_id}` | `POST`       | Добавление фидбека (к лабе/статье)    |
-| `/feedback/{feedback_id}` | `PATCH`      | Редактирование фидбека (только автор) |
-| `/feedback/{feedback_id}` | `DELETE`     | Удаление фидбека                      |
-
-
-# Moderation
-
-Add `/reports` or `/admin`?
-In progress...
-
-# Monetization
-
-Add `/subscribe` or `/ads`?
-In progress...
-
-
-# AI-Helper  
-
-Add `/ai`?
-In progress...

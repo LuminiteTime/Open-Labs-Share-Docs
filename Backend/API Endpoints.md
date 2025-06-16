@@ -2,7 +2,7 @@
 
 This document represents documentation for [[Frontend]] requests via REST. Each endpoint has its path, request and response body, types of errors.
 
-**Base URL:** `address.com/api`
+**Base URL:** `address.com/api/v1`
 
 All endpoints require JWT authentication unless specified otherwise.
 **Error response** for no authentication:  `401 Unauthorized`

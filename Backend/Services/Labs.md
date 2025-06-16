@@ -54,15 +54,15 @@ Labs Service является центральным хранилищем все
 
 **Lab Entity**
 
-| Field         | Type          |
-| ------------- | ------------- |
-| id (PK)       | UUID / long   |
-| title         | string        |
-| owner_id      | UUID / long   |
-| files         | list\<string> |
-| short_desc    | string        |
-| views         | integer       |
-| people_solved | integer       |
+| Field       | Type          |
+| ----------- | ------------- |
+| id (PK)     | UUID / long   |
+| title       | string        |
+| owner_id    | UUID / long   |
+| files       | list\<string> |
+| short_desc  | string        |
+| views       | integer       |
+| submissions | integer       |
  
 ### Сохранение данных в S3
 

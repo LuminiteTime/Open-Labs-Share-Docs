@@ -68,11 +68,10 @@ Labs Service является центральным хранилищем все
 
 ```text
 Bucket:
-user_id
-	└── lab_id
-		├── asset_file.extension
-		├── example.png
-		└── content.md
+lab_id
+	├── asset_file.extension
+	├── example.png
+	└── content.md
 ```
 
-Link example: `...\bucket\user_id\lab_id\filename`
+Link example: `...\bucket\lab_id\filename`
